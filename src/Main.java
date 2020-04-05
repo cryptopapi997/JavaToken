@@ -1,5 +1,6 @@
 import com.javaToken.JavaToken;
 import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.generated.Uint256;
@@ -36,6 +37,8 @@ public class Main {
         JavaToken javaToken = getDeployedContract(contractAddress, credentials, w3,
                 BigInteger.valueOf(200000));
 
+        System.out.println(getBalanceWithoutWrapper("0x8E62fAc00027EB9a093655E3C08167c86990e6D2","0x8570F180b7DF3374Ae6c494b62EDc820E180f8F2",w3));
+
         // Do more smart contract things :)
         // ...
     }
@@ -60,11 +63,11 @@ public class Main {
         return javaToken.transfer(to,value).send();
     }
 
-    static BigInteger getBalanceWithoutWrapper(String to, String contractAddress, Web3j w3) throws IOException {
+    static BigInteger getBalanceWithoutWrapper(String address, String contractAddress, Web3j w3) throws IOException {
 
         // Define the function we want to invoke from the smart contract
-        Function function = new Function("balanceOf", Arrays.asList(new Address(to)),
-                Collections.emptyList());
+        Function function = new Function("balanceOf", Arrays.asList(new Address(address)),
+                Arrays.asList(new TypeReference<Uint256>() {}));
 
         // Encode it for the contract to understand
         String encodedFunction = FunctionEncoder.encode(function);
@@ -74,19 +77,19 @@ public class Main {
          it's a read only transaction with no cost associated
          */
         EthCall response = w3.ethCall(
-                Transaction.createEthCallTransaction(to, contractAddress, encodedFunction),
+                Transaction.createEthCallTransaction(address, contractAddress, encodedFunction),
                 DefaultBlockParameterName.LATEST).send();
 
         return Numeric.toBigInt(response.getValue());
 
     }
 
-    static TransactionReceipt transferWithoutWrapper(String address, BigInteger value, String contractAddress,
+    static TransactionReceipt transferWithoutWrapper(String to, BigInteger value, String contractAddress,
                                                      Credentials credentials, BigInteger gasLimit,
                                                      Web3j w3) throws IOException {
 
         // Define the function we want to invoke from the smart contract
-        Function function = new Function("transfer", Arrays.asList(new Address(address), new Uint256(value)),
+        Function function = new Function("transfer", Arrays.asList(new Address(to), new Uint256(value)),
                 Collections.emptyList());
 
         // Encode it for the contract to understand
