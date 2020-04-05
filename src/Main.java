@@ -37,8 +37,6 @@ public class Main {
         JavaToken javaToken = getDeployedContract(contractAddress, credentials, w3,
                 BigInteger.valueOf(200000));
 
-        System.out.println(getBalanceWithoutWrapper("0x8E62fAc00027EB9a093655E3C08167c86990e6D2","0x8570F180b7DF3374Ae6c494b62EDc820E180f8F2",w3));
-
         // Do more smart contract things :)
         // ...
     }
@@ -117,6 +115,11 @@ public class Main {
     }
 
     // Helper functions
+    
+     /*
+     For more customization you can generate a custom gas provider for your contract here to set different
+     gas limits for each method call
+     */
     static ContractGasProvider getContractGasProvider(BigInteger gasPrice, BigInteger gasLimit) {
         return new ContractGasProvider() {
             @Override
@@ -141,6 +144,7 @@ public class Main {
         };
     }
 
+     // Gets the gas price off the network instead of using the standard
     static BigInteger getGasPrice(Web3j w3) throws IOException {
         EthGasPrice ethGasPrice = w3.ethGasPrice().send();
         return ethGasPrice.getGasPrice();
