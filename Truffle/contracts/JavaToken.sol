@@ -41,8 +41,7 @@ contract JavaToken{
     return true;
   }
 
-  function transferFrom(address _from, address _to, uint256 _value)
-  public returns (bool success){
+  function transferFrom(address _from, address _to, uint256 _value) public returns (bool success){
     require(balanceOf[_from] >= _value,
        "Tokens transferred must be less or equal to account balance");
     require(allowance[_from][msg.sender] >= _value,
